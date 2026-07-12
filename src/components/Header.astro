@@ -1,0 +1,48 @@
+---
+const nav = [
+  { href: '/', label: '首页' },
+  { href: '/apps/', label: '应用' },
+];
+const path = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 border-b border-(--color-line)/60 bg-(--color-void)/75 backdrop-blur-md">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5">
+    <a href="/" class="group flex items-baseline gap-2">
+      <span class="font-(family-name:--font-display) text-xl font-extrabold tracking-tight text-(--color-snow)">
+        airdb<span class="text-(--color-aurora)">.app</span>
+      </span>
+      <span class="hidden font-(family-name:--font-mono) text-[0.65rem] tracking-[0.2em] text-(--color-fog) sm:inline">
+        应用中心
+      </span>
+    </a>
+    <nav class="flex items-center gap-1 font-(family-name:--font-mono) text-sm">
+      {
+        nav.map((item) => {
+          const active = item.href === '/' ? path === '/' : path.startsWith(item.href);
+          return (
+            <a
+              href={item.href}
+              class:list={[
+                'rounded-full px-4 py-1.5 transition-colors',
+                active
+                  ? 'bg-(--color-panel) text-(--color-aurora)'
+                  : 'text-(--color-fog) hover:text-(--color-snow)',
+              ]}
+            >
+              {item.label}
+            </a>
+          );
+        })
+      }
+      <a
+        href="https://github.com/airdb-site"
+        target="_blank"
+        rel="noopener"
+        class="ml-1 rounded-full px-4 py-1.5 text-(--color-fog) transition-colors hover:text-(--color-snow)"
+      >
+        GitHub ↗
+      </a>
+    </nav>
+  </div>
+</header>

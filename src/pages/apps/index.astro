@@ -1,0 +1,72 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import AppCard from '../../components/AppCard.astro';
+import { PLATFORMS, PLATFORM_ORDER } from '../../lib/platforms';
+
+const apps = (await getCollection('apps')).sort((a, b) => a.data.order - b.data.order);
+const usedPlatforms = PLATFORM_ORDER.filter((p) => apps.some((a) => a.data.platforms.includes(p)));
+---
+
+<Base title="全部应用 · airdb 应用中心">
+  <main class="mx-auto max-w-6xl px-5 pt-16 sm:pt-20">
+    <p class="rise font-(family-name:--font-mono) text-xs tracking-[0.35em] text-(--color-aurora)">ALL APPS</p>
+    <h1 class="rise mt-3 font-(family-name:--font-display) text-3xl font-extrabold sm:text-4xl" style="--rise-delay:0.1s">
+      全部应用
+    </h1>
+    <p class="rise mt-3 max-w-xl text-(--color-fog)" style="--rise-delay:0.2s">
+      按平台筛选,点击卡片查看详情与下载方式。
+    </p>
+
+    <div class="rise mt-8 flex flex-wrap gap-2" style="--rise-delay:0.3s" role="group" aria-label="按平台筛选">
+      <button class="filter-chip" data-filter="all" aria-pressed="true">全部</button>
+      {
+        usedPlatforms.map((p) => (
+          <button class="filter-chip" data-filter={p} aria-pressed="false">
+            {PLATFORMS[p].short}
+          </button>
+        ))
+      }
+    </div>
+
+    <div id="app-grid" class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {apps.map((app, i) => <AppCard app={app} delay={Math.min(i * 0.06, 0.4)} />)}
+    </div>
+
+    <p id="empty-tip" class="mt-16 hidden text-center font-(family-name:--font-mono) text-sm text-(--color-fog)">
+      这个平台下暂时还没有应用。
+    </p>
+  </main>
+
+  <script>
+    const chips = document.querySelectorAll<HTMLButtonElement>('.filter-chip');
+    const cards = document.querySelectorAll<HTMLElement>('#app-grid .app-card');
+    const emptyTip = document.getElementById('empty-tip')!;
+
+    function apply(filter: string) {
+      let shown = 0;
+      cards.forEach((card) => {
+        const match = filter === 'all' || (card.dataset.platforms ?? '').split(',').includes(filter);
+        card.style.display = match ? '' : 'none';
+        if (match) shown++;
+      });
+      emptyTip.classList.toggle('hidden', shown > 0);
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filter === filter)));
+    }
+
+    chips.forEach((chip) =>
+      chip.addEventListener('click', () => {
+        const filter = chip.dataset.filter ?? 'all';
+        apply(filter);
+        const url = new URL(location.href);
+        if (filter === 'all') url.searchParams.delete('platform');
+        else url.searchParams.set('platform', filter);
+        history.replaceState(null, '', url);
+      })
+    );
+
+    // 支持 /apps/?platform=agent 直达
+    const initial = new URLSearchParams(location.search).get('platform');
+    if (initial && [...chips].some((c) => c.dataset.filter === initial)) apply(initial);
+  </script>
+</Base>

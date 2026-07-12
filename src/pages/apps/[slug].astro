@@ -1,0 +1,112 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { PLATFORMS, STATUS } from '../../lib/platforms';
+
+export async function getStaticPaths() {
+  const apps = await getCollection('apps');
+  return apps.map((app) => ({ params: { slug: app.id }, props: { app } }));
+}
+
+const { app } = Astro.props;
+const { Content } = await render(app);
+const { name, tagline, platforms, status, category, icon, links, releasedAt } = app.data;
+const isImage = icon.startsWith('/') || icon.startsWith('http');
+
+const actionLinks = [
+  links.appstore && { href: links.appstore, label: ' App Store', primary: true },
+  links.googleplay && { href: links.googleplay, label: 'Google Play', primary: !links.appstore },
+  links.apk && { href: links.apk, label: '下载 APK', primary: false },
+  links.web && { href: links.web, label: '打开 Web 版 ↗', primary: !links.appstore && !links.googleplay },
+].filter(Boolean) as { href: string; label: string; primary: boolean }[];
+---
+
+<Base title={`${name} · airdb 应用中心`} description={tagline}>
+  <main class="mx-auto max-w-3xl px-5 pt-16 sm:pt-20">
+    <a
+      href="/apps/"
+      class="rise font-(family-name:--font-mono) text-sm text-(--color-fog) transition-colors hover:text-(--color-aurora)"
+    >
+      ← 全部应用
+    </a>
+
+    <header class="rise mt-8 flex items-start gap-5" style="--rise-delay:0.1s">
+      <div
+        class="flex h-20 w-20 flex-none items-center justify-center overflow-hidden rounded-2xl border border-(--color-line) bg-(--color-panel) text-4xl"
+      >
+        {isImage ? <img src={icon} alt="" class="h-full w-full object-cover" /> : icon}
+      </div>
+      <div class="min-w-0">
+        <div class="flex flex-wrap items-center gap-3">
+          <h1 class="font-(family-name:--font-display) text-3xl font-extrabold">{name}</h1>
+          <span
+            class:list={[
+              'flex items-center gap-1.5 font-(family-name:--font-mono) text-xs',
+              STATUS[status].className,
+            ]}
+          >
+            <i class="status-dot"></i>
+            {STATUS[status].label}
+          </span>
+        </div>
+        <p class="mt-2 leading-relaxed text-(--color-fog)">{tagline}</p>
+        <div class="mt-3 flex flex-wrap items-center gap-1.5">
+          {
+            platforms.map((p) => (
+              <span class="plat-badge" style={`--plat:${PLATFORMS[p].color}`}>
+                {PLATFORMS[p].label}
+              </span>
+            ))
+          }
+          <span class="font-(family-name:--font-mono) text-[0.68rem] tracking-wider text-(--color-fog)/70">
+            {category}
+            {releasedAt && ` · ${releasedAt.getFullYear()}.${String(releasedAt.getMonth() + 1).padStart(2, '0')}`}
+          </span>
+        </div>
+      </div>
+    </header>
+
+    {
+      actionLinks.length > 0 && (
+        <div class="rise mt-8 flex flex-wrap gap-3" style="--rise-delay:0.2s">
+          {actionLinks.map((l) => (
+            <a href={l.href} class:list={['link-btn', l.primary && 'primary']} target="_blank" rel="noopener">
+              {l.label}
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      links.agentEndpoint && (
+        <div
+          class="rise mt-8 rounded-xl border border-(--color-plat-agent)/30 bg-(--color-plat-agent)/5 p-5"
+          style="--rise-delay:0.25s"
+        >
+          <p class="font-(family-name:--font-mono) text-xs tracking-[0.25em] text-(--color-plat-agent)">
+            AGENT ENDPOINT · MCP
+          </p>
+          <code class="mt-2 block break-all font-(family-name:--font-mono) text-sm text-(--color-snow)">
+            {links.agentEndpoint}
+          </code>
+        </div>
+      )
+    }
+
+    {
+      links.qrcode && (
+        <figure class="rise mt-8 inline-block rounded-xl border border-(--color-line) bg-white p-4" style="--rise-delay:0.3s">
+          <img src={links.qrcode} alt={`${name} 小程序码`} width="160" height="160" />
+          <figcaption class="mt-2 text-center font-(family-name:--font-mono) text-xs text-neutral-500">
+            微信扫码使用
+          </figcaption>
+        </figure>
+      )
+    }
+
+    <article class="prose-app rise mt-6 border-t border-(--color-line)/60 pt-2" style="--rise-delay:0.35s">
+      <Content />
+    </article>
+  </main>
+</Base>

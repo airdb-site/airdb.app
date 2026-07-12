@@ -1,0 +1,300 @@
+@import 'tailwindcss';
+
+@theme {
+  /* 深空底色 */
+  --color-void: #05080f;
+  --color-ink: #0a101c;
+  --color-panel: #0e1626;
+  --color-line: #1b2740;
+  --color-fog: #8b9bb8;
+  --color-snow: #e8eef9;
+
+  /* 极光强调色 */
+  --color-aurora: #55e6c4;
+  --color-aurora-dim: #2ba58c;
+  --color-amber: #ffc45e;
+
+  /* 平台色 */
+  --color-plat-ios: #9db8ff;
+  --color-plat-android: #7ee787;
+  --color-plat-mini: #55d47a;
+  --color-plat-web: #79c0ff;
+  --color-plat-agent: #d2a8ff;
+
+  --font-display: 'Syne', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-body: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+}
+
+html {
+  background: var(--color-void);
+  color: var(--color-snow);
+  font-family: var(--font-body);
+  scrollbar-color: var(--color-line) var(--color-void);
+}
+
+body {
+  min-height: 100dvh;
+  overflow-x: hidden;
+  /* 深空氛围:顶部极光晕 + 底部暖光 */
+  background:
+    radial-gradient(1100px 520px at 78% -12%, rgba(85, 230, 196, 0.09), transparent 62%),
+    radial-gradient(900px 480px at 8% 4%, rgba(157, 184, 255, 0.07), transparent 60%),
+    radial-gradient(1200px 700px at 50% 118%, rgba(255, 196, 94, 0.05), transparent 65%),
+    var(--color-void);
+}
+
+::selection {
+  background: var(--color-aurora);
+  color: var(--color-void);
+}
+
+/* ---------- 载入编排:交错浮现 ---------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  opacity: 0;
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--rise-delay, 0s);
+}
+
+/* 滚动进入视口时浮现(配合 IntersectionObserver) */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0s);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .reveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------- 应用卡片 ---------- */
+.app-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+  background: linear-gradient(160deg, rgba(20, 30, 52, 0.55), rgba(10, 16, 28, 0.9));
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+  overflow: hidden;
+}
+
+.app-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(420px 200px at var(--mx, 50%) -20%, rgba(85, 230, 196, 0.12), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.app-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(85, 230, 196, 0.45);
+  box-shadow:
+    0 18px 44px -18px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(85, 230, 196, 0.12);
+}
+
+.app-card:hover::after {
+  opacity: 1;
+}
+
+/* 状态信号灯 */
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  flex: none;
+}
+
+.status-online .status-dot {
+  background: var(--color-aurora);
+  box-shadow: 0 0 8px rgba(85, 230, 196, 0.9);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+.status-beta .status-dot {
+  background: var(--color-amber);
+  box-shadow: 0 0 8px rgba(255, 196, 94, 0.8);
+}
+
+.status-dev .status-dot {
+  background: var(--color-fog);
+}
+
+.status-online { color: var(--color-aurora); }
+.status-beta { color: var(--color-amber); }
+.status-dev { color: var(--color-fog); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-online .status-dot { animation: none; }
+}
+
+/* 平台徽章 */
+.plat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--plat) 38%, transparent);
+  color: var(--plat);
+  background: color-mix(in srgb, var(--plat) 10%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* 筛选按钮 */
+.filter-chip {
+  padding: 0.42rem 1.05rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-line);
+  color: var(--color-fog);
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: transparent;
+}
+
+.filter-chip:hover {
+  border-color: var(--color-aurora-dim);
+  color: var(--color-snow);
+}
+
+.filter-chip[aria-pressed='true'] {
+  background: var(--color-aurora);
+  border-color: var(--color-aurora);
+  color: var(--color-void);
+  font-weight: 600;
+}
+
+/* 链接按钮 */
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--color-line);
+  color: var(--color-snow);
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+}
+
+.link-btn:hover {
+  border-color: var(--color-aurora);
+  color: var(--color-aurora);
+  transform: translateY(-1px);
+}
+
+.link-btn.primary {
+  background: var(--color-aurora);
+  border-color: var(--color-aurora);
+  color: var(--color-void);
+  font-weight: 600;
+}
+
+.link-btn.primary:hover {
+  background: color-mix(in srgb, var(--color-aurora) 85%, white);
+  color: var(--color-void);
+  box-shadow: 0 8px 28px -8px rgba(85, 230, 196, 0.55);
+}
+
+/* 详情页正文排版 */
+.prose-app {
+  color: var(--color-fog);
+  line-height: 1.85;
+  font-size: 0.98rem;
+}
+
+.prose-app h2 {
+  color: var(--color-snow);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 2.2rem 0 0.8rem;
+}
+
+.prose-app h3 {
+  color: var(--color-snow);
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 1.8rem 0 0.6rem;
+}
+
+.prose-app p { margin: 0.9rem 0; }
+
+.prose-app ul {
+  list-style: none;
+  margin: 0.9rem 0;
+  padding: 0;
+}
+
+.prose-app ul li {
+  position: relative;
+  padding-left: 1.4rem;
+  margin: 0.45rem 0;
+}
+
+.prose-app ul li::before {
+  content: '✦';
+  position: absolute;
+  left: 0;
+  color: var(--color-aurora);
+  font-size: 0.75rem;
+  top: 0.35rem;
+}
+
+.prose-app a {
+  color: var(--color-aurora);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-app code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-panel);
+  border: 1px solid var(--color-line);
+  padding: 0.1em 0.4em;
+  border-radius: 0.3em;
+}
