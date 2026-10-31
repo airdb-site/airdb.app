@@ -1,5 +1,6 @@
 ---
 # ⚠️ 示例数据:请替换为真实应用信息
+example: true
 name: 随手收藏
 tagline: 微信里看到的好内容,一键收藏、自动归类,再也不怕找不到。
 platforms: [miniprogram]

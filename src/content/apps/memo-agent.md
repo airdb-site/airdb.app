@@ -1,5 +1,6 @@
 ---
 # ⚠️ 示例数据:请替换为真实应用信息
+example: true
 name: Memo Agent 服务
 tagline: 为 AI 智能体设计的记忆服务 —— Agent 可通过 MCP 协议读写长期记忆。
 platforms: [agent]

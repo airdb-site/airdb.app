@@ -6,9 +6,10 @@ import Footer from '../components/Footer.astro';
 interface Props {
   title: string;
   description?: string;
+  noindex?: boolean;
 }
 
-const { title, description = 'airdb 应用中心 —— 汇集我们打造的小程序、iOS、Android、Web 与 Agent 应用。' } =
+const { noindex = false, title, description = 'airdb 应用中心 —— 汇集我们打造的小程序、iOS、Android、Web 与 Agent 应用。' } =
   Astro.props;
 ---
 
@@ -20,7 +21,7 @@ const { title, description = 'airdb 应用中心 —— 汇集我们打造的小
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -29,6 +30,7 @@ const { title, description = 'airdb 应用中心 —— 汇集我们打造的小
   </head>
   <body>
     <Header />
+    <p class="mx-auto max-w-6xl px-5 pt-4 text-sm text-(--color-fog)">当前应用目录为示例展示，尚未提供真实下载或服务接入。</p>
     <slot />
     <Footer />
 

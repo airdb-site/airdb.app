@@ -46,7 +46,7 @@ const actionLinks = [
             ]}
           >
             <i class="status-dot"></i>
-            {STATUS[status].label}
+            {app.data.example ? '示例应用' : STATUS[status].label}
           </span>
         </div>
         <p class="mt-2 leading-relaxed text-(--color-fog)">{tagline}</p>
@@ -58,7 +58,7 @@ const actionLinks = [
               </span>
             ))
           }
-          <span class="font-(family-name:--font-mono) text-[0.68rem] tracking-wider text-(--color-fog)/70">
+          <span class="font-(family-name:--font-mono) text-[0.68rem] tracking-wider text-(--color-fog)">
             {category}
             {releasedAt && ` · ${releasedAt.getFullYear()}.${String(releasedAt.getMonth() + 1).padStart(2, '0')}`}
           </span>
@@ -67,7 +67,7 @@ const actionLinks = [
     </header>
 
     {
-      actionLinks.length > 0 && (
+      !app.data.example && actionLinks.length > 0 && (
         <div class="rise mt-8 flex flex-wrap gap-3" style="--rise-delay:0.2s">
           {actionLinks.map((l) => (
             <a href={l.href} class:list={['link-btn', l.primary && 'primary']} target="_blank" rel="noopener">
@@ -79,7 +79,7 @@ const actionLinks = [
     }
 
     {
-      links.agentEndpoint && (
+      !app.data.example && links.agentEndpoint && (
         <div
           class="rise mt-8 rounded-xl border border-(--color-plat-agent)/30 bg-(--color-plat-agent)/5 p-5"
           style="--rise-delay:0.25s"
@@ -95,7 +95,7 @@ const actionLinks = [
     }
 
     {
-      links.qrcode && (
+      !app.data.example && links.qrcode && (
         <figure class="rise mt-8 inline-block rounded-xl border border-(--color-line) bg-white p-4" style="--rise-delay:0.3s">
           <img src={links.qrcode} alt={`${name} 小程序码`} width="160" height="160" />
           <figcaption class="mt-2 text-center font-(family-name:--font-mono) text-xs text-neutral-500">
@@ -105,6 +105,7 @@ const actionLinks = [
       )
     }
 
+    {app.data.example && <p class="mt-8 text-(--color-fog)">以下为示例介绍，不代表已上线产品；下载、二维码和接入地址尚未开放。</p>}
     <article class="prose-app rise mt-6 border-t border-(--color-line)/60 pt-2" style="--rise-delay:0.35s">
       <Content />
     </article>

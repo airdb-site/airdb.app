@@ -10,6 +10,7 @@ const apps = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/apps' }),
   schema: z.object({
     name: z.string(),
+    example: z.boolean().default(false),
     tagline: z.string(),
     platforms: z.array(z.enum(['ios', 'android', 'miniprogram', 'web', 'agent'])).min(1),
     status: z.enum(['online', 'beta', 'dev']).default('online'),

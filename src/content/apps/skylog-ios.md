@@ -1,5 +1,6 @@
 ---
 # ⚠️ 示例数据:请替换为真实应用信息
+example: true
 name: SkyLog 云迹
 tagline: 极简的个人记录工具,把每天的想法、照片与足迹写进你自己的时间线。
 platforms: [ios, android]

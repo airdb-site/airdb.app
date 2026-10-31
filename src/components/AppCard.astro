@@ -28,7 +28,7 @@ const isImage = icon.startsWith('/') || icon.startsWith('http');
       class:list={['flex items-center gap-1.5 font-(family-name:--font-mono) text-[0.68rem]', STATUS[status].className]}
     >
       <i class="status-dot"></i>
-      {STATUS[status].label}
+      {app.data.example ? '示例应用' : STATUS[status].label}
     </span>
   </div>
 
@@ -45,7 +45,7 @@ const isImage = icon.startsWith('/') || icon.startsWith('http');
         </span>
       ))
     }
-    <span class="ml-auto font-(family-name:--font-mono) text-[0.68rem] tracking-wider text-(--color-fog)/70">
+    <span class="ml-auto font-(family-name:--font-mono) text-[0.68rem] tracking-wider text-(--color-fog)">
       {category}
     </span>
   </div>

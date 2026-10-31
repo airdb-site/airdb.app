@@ -1,5 +1,6 @@
 ---
 # ⚠️ 示例数据:请替换为真实应用信息
+example: true
 name: airdb 控制台
 tagline: 团队内部的一站式数据看板,聚合各应用的核心指标与告警。
 platforms: [web]
