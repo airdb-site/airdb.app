@@ -7,7 +7,7 @@ const path = Astro.url.pathname;
 ---
 
 <header class="sticky top-0 z-50 border-b border-(--color-line)/60 bg-(--color-void)/75 backdrop-blur-md">
-  <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5">
+  <div class="app-header-row mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5">
     <a href="/" class="group flex items-baseline gap-2">
       <span class="font-(family-name:--font-display) text-xl font-extrabold tracking-tight text-(--color-snow)">
         airdb<span class="text-(--color-aurora)">.app</span>
@@ -46,3 +46,10 @@ const path = Astro.url.pathname;
     </nav>
   </div>
 </header>
+
+<style>
+  @media (max-width: 380px) {
+    .app-header-row { flex-wrap: wrap; gap: 12px; }
+    nav { width: 100%; justify-content: space-between; }
+  }
+</style>

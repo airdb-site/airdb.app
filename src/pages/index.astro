@@ -7,7 +7,7 @@ import AppCard from '../components/AppCard.astro';
 const apps = (await getCollection('apps')).sort((a, b) => a.data.order - b.data.order);
 const featured = apps.filter((a) => a.data.featured);
 const platformCount = new Set(apps.flatMap((a) => a.data.platforms)).size;
-const onlineCount = apps.filter((a) => a.data.status === 'online').length;
+const onlineCount = apps.filter((a) => a.data.status === 'online' && !a.data.example).length;
 ---
 
 <Base title="airdb 应用中心 · 我们的应用星图">
@@ -43,7 +43,7 @@ const onlineCount = apps.filter((a) => a.data.status === 'online').length;
       >
         {
           [
-            [String(apps.length).padStart(2, '0'), '款应用'],
+            [String(apps.length).padStart(2, '0'), '个目录条目'],
             [String(onlineCount).padStart(2, '0'), '已上线'],
             [String(platformCount).padStart(2, '0'), '个平台'],
           ].map(([num, label]) => (
